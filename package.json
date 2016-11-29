@@ -1,6 +1,6 @@
 {
   "name": "redis-scheduled",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "a scheduled module use redis",
   "main": "index.js",
   "scripts": {
