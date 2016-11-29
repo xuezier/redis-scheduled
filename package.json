@@ -13,6 +13,7 @@
     "redis-schedule",
     "redis-scheduled"
   ],
+  "homepage": "https://github.com/xuezier/redis-scheduled",
   "author": "xuezi",
   "license": "ISC",
   "dependencies": {
