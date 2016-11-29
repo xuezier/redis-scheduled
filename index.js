@@ -40,7 +40,7 @@ class SCHEDULED extends eventEmitter {
     });
     // when redis connected success, check eventMap quene
     self.redis.on('connect', () => {
-      if(self.eventMap.size) {
+      if (self.eventMap.size) {
         self.eventMap.forEach((event, key) => {
           typeof event == 'function' && event();
           self.eventMap.delete(key);
@@ -67,7 +67,7 @@ class SCHEDULED extends eventEmitter {
   setScheduled(key, value) {
     let self = this;
 
-    if(self.scheduledMap.get(key))
+    if (self.scheduledMap.get(key))
       return console.error(`key ${key} has been used`);
     return self.scheduledMap.set(key, value);
   }
@@ -81,14 +81,14 @@ class SCHEDULED extends eventEmitter {
   every(options, callback) {
     let self = this;
 
-    if(self.scheduledMap.get(options.name) || !options.name)
+    if (self.scheduledMap.get(options.name) || !options.name)
       return console.error(`task name ${options.name} has been used or cant be null`);
 
     let from = +new Date(options.from);
     let repeat = options.repeat;
 
     let unit = repeat.replace(/\d+/g, '');
-    if(!UNIT_MAP[unit]) throw new Error('repeat unit only allowed s, min, h, day, week');
+    if (!UNIT_MAP[unit]) throw new Error('repeat unit only allowed s, min, h, day, week');
     repeat = parseInt(repeat) * UNIT_MAP[unit];
 
     let eventKey = +new Date + Math.random().toString().substr(2, 4);
@@ -110,7 +110,7 @@ class SCHEDULED extends eventEmitter {
       });
     };
 
-    if(self.redis.connected) return fun();
+    if (self.redis.connected) return fun();
 
     self.eventMap.set(`scheduled${eventKey}`, fun);
   }
@@ -143,7 +143,7 @@ class SCHEDULED extends eventEmitter {
       });
     };
 
-    if(self.redis.connected) return fun();
+    if (self.redis.connected) return fun();
 
     self.eventMap.set(`scheduled${eventKey}`, fun);
   }
@@ -153,7 +153,7 @@ class SCHEDULED extends eventEmitter {
 
     let eventKey = self.scheduledMap.get(name);
     self.redis.exists(eventKey, (err, exists) => {
-      if(exists) self.redis.del(eventKey);
+      if (exists) self.redis.del(eventKey);
       self.scheduledEventMap.delete(`${self.options.prefix}${eventKey}`);
       self.scheduledMap.delete(name);
     });
@@ -165,30 +165,6 @@ class SCHEDULED extends eventEmitter {
   }
 
 }
-
-
-let count = 0;
-let scheduled = new SCHEDULED();
-scheduled.every({
-  from: +new Date + 5000,
-  repeat: '3min',
-  name: 'aaa'
-}, function() {
-  console.log('hehe', count++);
-});
-scheduled.every({
-  from: +new Date + 4000,
-  repeat: '3min',
-  name: 'bbb'
-}, function() {
-  console.log('heiheihei', count++);
-});
-
-scheduled.setTimeout('ccc', +new Date() + 5000, function() {
-  console.log('wahshs');
-});
-
-// scheduled.clearEvery('aaa');
 
 module.exports = function(options) {
   return new SCHEDULED(options);
